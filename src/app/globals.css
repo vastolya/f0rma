@@ -1,26 +1,270 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+  Палитра холодная и тёмная намеренно: все фотографии сняты ночью, лёд на них
+  подсвечен синим, зелёным и фиолетовым. На светлом фоне такие кадры гаснут.
+*/
+@theme {
+  --color-ink-950: #04070c;
+  --color-ink-900: #070b12;
+  --color-ink-850: #0a1018;
+  --color-ink-800: #0e1620;
+  --color-ink-700: #16202c;
+  --color-ink-600: #22303f;
+
+  --color-frost-50: #f2f8fc;
+  --color-frost-100: #e2eef6;
+  --color-frost-200: #c5dceb;
+  --color-frost-300: #a8c2d4;
+  --color-frost-400: #8ba8bd;
+  --color-frost-500: #6b8599;
+
+  --color-glacier-300: #9fe3ff;
+  --color-glacier-400: #6cd0f5;
+  --color-glacier-500: #35b4e0;
+  --color-aurora-400: #b9a6ff;
+
+  --font-display: var(--font-display), "Arial Narrow", sans-serif;
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    color-scheme: dark;
+    scroll-behavior: smooth;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background-color: var(--color-ink-950);
+    color: var(--color-frost-100);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /*
+    Заголовки — узкий гротеск капителью: вертикальный, как сколотый блок льда.
+    Вес работы берут на себя размер и воздух вокруг, а не насыщенность штриха.
+  */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: -0.005em;
+  }
+
+  p,
+  li,
+  dd,
+  dt {
+    font-weight: 300;
+  }
+
+  ::selection {
+    background-color: var(--color-glacier-400);
+    color: var(--color-ink-950);
+  }
+
+  /* Углы не скругляем нигде: скол льда — прямая грань, а не пилюля. */
+  :focus-visible {
+    outline: 1px solid var(--color-glacier-400);
+    outline-offset: 4px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /*
+    Поверхность карточек. Без backdrop-filter: он пересчитывается на каждом
+    кадре прокрутки, а карточек на странице много — отсюда рывки при скролле.
+  */
+  .surface {
+    background-color: var(--color-ink-850);
+    border: 1px solid color-mix(in oklab, var(--color-frost-400) 14%, transparent);
+  }
+
+  /* Размытие оставлено там, где элемент один и лежит поверх контента. */
+  .surface-blur {
+    background-color: color-mix(in oklab, var(--color-ink-850) 86%, transparent);
+    border: 1px solid color-mix(in oklab, var(--color-frost-400) 14%, transparent);
+    backdrop-filter: blur(12px);
+  }
+
+  .surface-hover {
+    transition:
+      border-color 0.4s var(--ease-out-soft),
+      transform 0.4s var(--ease-out-soft);
+  }
+
+  .surface-hover:hover {
+    border-color: color-mix(in oklab, var(--color-glacier-400) 45%, transparent);
+  }
+
+  /*
+    Тихое свечение за первым экраном — как ореол подсветки вокруг льда ночью.
+    Статичный градиент, без анимации и без blur-фильтра.
+  */
+  .glow {
+    pointer-events: none;
+    position: absolute;
+    background: radial-gradient(
+      closest-side,
+      color-mix(in oklab, var(--color-aurora-400) 16%, transparent),
+      color-mix(in oklab, var(--color-glacier-500) 6%, transparent) 60%,
+      transparent
+    );
+  }
+
+  .map-preview {
+    animation: preview-open 420ms var(--ease-out-soft) both;
+  }
+
+  .map-preview-line {
+    animation: preview-line 260ms var(--ease-out-soft) both;
+  }
+
+  .map-preview-item {
+    animation: preview-item 420ms var(--ease-out-soft) both;
+  }
+
+  @keyframes preview-open {
+    from {
+      opacity: 0;
+      transform: scale(0.9) translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @keyframes preview-line {
+    from {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+    to {
+      opacity: 1;
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes preview-item {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Мелкая разрядка для надзаголовков — встречается в каждой секции. */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-frost-500);
+  }
+
+  /*
+    Единственный вид кнопки на сайте: подпись и волосяная линия под ней. Рамки
+    и заливки на тёмном фоне выглядят тяжелее самого материала, а линия при
+    наведении просто светлеет — этого достаточно, чтобы прочесть действие.
+  */
+  .action {
+    position: relative;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.6em;
+    padding-bottom: 0.4em;
+    color: var(--color-frost-100);
+    transition: color 0.35s var(--ease-out-soft);
+  }
+
+  .action::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: color-mix(in oklab, var(--color-frost-400) 40%, transparent);
+    transition: background-color 0.35s var(--ease-out-soft);
+  }
+
+  .action:hover {
+    color: var(--color-glacier-300);
+  }
+
+  .action:hover::after {
+    background-color: var(--color-glacier-400);
+  }
+
+  /* Приглушённый вариант — для второстепенного действия рядом с основным. */
+  .action-quiet {
+    color: var(--color-frost-400);
+  }
+
+  .action-quiet::after {
+    background-color: transparent;
+  }
+
+  /*
+    Переключатель: набор подписей в строку. Выбранная подчёркнута, остальные
+    приглушены — ни рамок, ни заливки, ни скруглений.
+  */
+  .switch {
+    position: relative;
+    padding-bottom: 0.35em;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-frost-500);
+    transition: color 0.35s var(--ease-out-soft);
+  }
+
+  .switch:hover {
+    color: var(--color-frost-100);
+  }
+
+  .switch[aria-pressed="true"],
+  .switch[aria-current="page"] {
+    color: var(--color-frost-50);
+  }
+
+  .switch[aria-pressed="true"]::after,
+  .switch[aria-current="page"]::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: var(--color-glacier-400);
+  }
+
+  /* Волосяной разделитель — основной способ отбить блоки друг от друга. */
+  .hairline {
+    border-color: color-mix(in oklab, var(--color-frost-400) 16%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
