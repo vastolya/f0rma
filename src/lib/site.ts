@@ -23,7 +23,7 @@ export const site = {
     "Ачинск",
   ],
   /** Боевой домен задаётся при деплое; без переменной — основной адрес. */
-  url: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://forma-ice.ru").replace(/\/$/, ""),
+  url: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://f0rma.art").replace(/\/$/, ""),
   region: "Красноярский край",
   cities: ["Красноярск", "Дивногорск", "Лесосибирск", "Ачинск"],
   season: "С конца ноября до середины марта",

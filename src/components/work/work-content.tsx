@@ -74,7 +74,9 @@ export function WorkContent({ work }: { work: Work }) {
 
       {work.media.length > 1 && (
         <section className="mt-16">
-          <h2 className="eyebrow mb-5">Съёмка</h2>
+          <h2 className="eyebrow mb-5">
+            {work.status === "concept" ? "Визуализации" : "Съёмка"}
+          </h2>
           <div className="grid gap-4 sm:grid-cols-2">
             {work.media.slice(1).map((item) => (
               <figure
