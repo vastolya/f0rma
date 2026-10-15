@@ -57,7 +57,7 @@ export type Cluster = {
 export function clusterWorks(
   projection: GeoProjection,
   works: MappedWork[],
-  threshold = 2.5,
+  threshold = 1.2,
 ): Cluster[] {
   const clusters: Cluster[] = [];
 

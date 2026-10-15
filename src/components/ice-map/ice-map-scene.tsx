@@ -30,7 +30,7 @@ const POINTER_PITCH = 0.1;
 
 const CUBE_MODEL = "/models/ice-cube.glb";
 /** Желаемый размер метки по наибольшей стороне, в единицах сцены. */
-const CUBE_SIZE = 1.9;
+const CUBE_SIZE = 1.35;
 const TMP_SCALE = new THREE.Vector3();
 
 /** Сколько секунд волна внимания задерживается на одной метке. */
@@ -444,7 +444,7 @@ function IceCrystal({
     >
       {/* Мишень стоит отдельно от анимации: иначе попасть по ней было бы сложнее. */}
       <mesh visible={false} position={[0, 1.9, 0]}>
-        <boxGeometry args={[3.8, 4.4, 3.8]} />
+        <boxGeometry args={[1.5, 4.4, 1.5]} />
       </mesh>
 
       <mesh
